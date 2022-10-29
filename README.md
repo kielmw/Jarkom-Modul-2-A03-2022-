@@ -5,7 +5,7 @@ Repository untuk Laporan Resmi Praktikum Modul 2 Jarkom 2022 - A03
 * Ezekiel Mashal Wicaksono
   5025201140
 * Adifa
-  502520
+  5025201013
 
 
 ### Soal No. 1
@@ -117,6 +117,64 @@ service bind9 restart
 ```
 - Untuk melakukan pengetesan maka ubah namserver dari **SSS** menuju ip dari **Wise** , kemudian coba di ping menuju **wise.a03.com** maka akan didapatkan
 ![Nomor 2](https://i.ibb.co/zbbqZ66/2.jpg)
+
+## Soal 3
+
+Setelah itu ia juga ingin membuat subdomain eden.wise.yyy.com dengan alias www.eden.wise.yyy.com yang diatur DNS-nya di WISE dan mengarah ke Eden
+
+### Jawaban
+
+**Pada Wise**
+
+* Edit `etc/bind/wise/wise.a03.com` seperti gambar dibawah untuk menambahkan alias `www.eden` dan subdomain `eden`
+
+    ![](https://cdn.discordapp.com/attachments/949602435100467230/1035920475701907457/Screen_Shot_2022-10-29_at_21.15.49.png)
+
+* Lalu restart bind9
+
+  ```bash
+  service bind9 restart
+  ```
+
+**Pada SSS**
+
+* Kemudian lakukan test dengan `ping eden.wise.a03.com` dan `ping www.eden.wise.a03.com`
+
+    ![](https://cdn.discordapp.com/attachments/949602435100467230/1035920476574330931/Screen_Shot_2022-10-29_at_21.16.55.png)
+
+## Soal 4
+
+Buat juga reverse domain untuk domain utama
+
+### Jawaban
+
+**Pada Wise**
+
+* Edit `/etc/bind/named.conf.local` seperti dibawah ini
+
+    ![](https://cdn.discordapp.com/attachments/949602435100467230/1035917437792690246/Screen_Shot_2022-10-29_at_21.00.48.png)
+
+* Copy `db.local` ke direktory `wise` dan diraname menjadi `1.170.192.in-addr.arpa`
+
+  ```bash
+  cp /etc/bind/db.local /etc/bind/wise/1.170.192.in-addr.arpa
+  ```
+
+* Edit `/etc/bind/wise/1.170.192.in-addr.arpa` seperti dibawah ini
+
+    ![](https://cdn.discordapp.com/attachments/949602435100467230/1035917436966412318/Screen_Shot_2022-10-29_at_20.56.11.png)
+
+* Lalu restart bind9
+
+  ```bash
+  service bind9 restart
+  ```
+
+**Pada SSS**
+
+* Kemudian lakukan test menggunakan `host -t PTR 192.170.1.2`
+
+   ![](https://cdn.discordapp.com/attachments/949602435100467230/1035917437419388928/Screen_Shot_2022-10-29_at_21.02.23.png)
 
 ### Soal No. 5
 - Untuk menjadikan **Berlint** sebagai DNS Slave kita akan mengubah isi dari file **named.conf.local** pada **WISE** menjadi seperti dibawah ini
