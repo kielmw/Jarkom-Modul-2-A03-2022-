@@ -3,7 +3,7 @@ Repository untuk Laporan Resmi Praktikum Modul 2 Jarkom 2022 - A03
 * Fayyadh Hafizh
   502520
 * Ezekiel Mashal Wicaksono
-  502520
+  5025201140
 * Adifa
   502520
 
