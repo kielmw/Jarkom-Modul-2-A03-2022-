@@ -119,7 +119,7 @@ service bind9 restart
 ![Nomor 2](https://i.ibb.co/zbbqZ66/2.jpg)
 
 ### Soal No. 5
-- Untuk menjadikan Berlint sebagai DNS Slave kita akan mengubah isi dari file **named.conf.local** pada **WISE** menjadi seperti dibawah ini
+- Untuk menjadikan **Berlint** sebagai DNS Slave kita akan mengubah isi dari file **named.conf.local** pada **WISE** menjadi seperti dibawah ini
 ```
 zone "wise.a03.com" {
         type master;
@@ -128,12 +128,12 @@ zone "wise.a03.com" {
 };
 ```
 - Lalu kita restart service bind9 dengan command ``` service bind9 restart ```
-- Setelah itu, kita akan menginstall bind9 juga pada node Berlint dengan command 
+- Setelah itu, kita akan menginstall bind9 juga pada node **Berlint** dengan command 
 ```
 apt-get update
 apt-get install bind9 -y
 ```
-- Pada file **named.conf.local** di Berlint kita isi konfigurasi berikut
+- Pada file **named.conf.local** di **Berlint** kita isi konfigurasi berikut
 ```
 zone "wise.a03.com" {
     type slave;
@@ -142,7 +142,65 @@ zone "wise.a03.com" {
 };
 ```
 - Restart service bind9 dengan command ``` service bind9 restart ```
-- Setelah semuanya telah dilakukan maka untuk testing kita akan melakukan ping kepada WISE (matikan terlebih dahulu service bind9 pada WISE dengan command ``` service bind9 stop ```
+- Setelah semuanya telah dilakukan maka untuk testing kita akan melakukan ping kepada **wise.a03.com** (matikan terlebih dahulu service bind9 pada **WISE** dengan command ``` service bind9 stop ```
 - Jika berhasil maka hasilnya akan terlihat seperti ini
 ![image](https://user-images.githubusercontent.com/72655301/198835253-34831cec-1447-4c48-83fb-c3e3b2406902.png)
 
+### Soal No. 6
+- Untuk mendelegasikan domain atau subdomain kita akan menambah konfigurasi pada file **wise.a03.com** di **WISE** seperti berikut
+```
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     wise.a03.com. root.wise.a03.com. (
+                     2022100601         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@               IN      NS      wise.a03.com.
+@               IN      A       192.170.1.2
+www             IN      CNAME   wise.a03.com.
+eden            IN      A       192.170. Ke3.3
+www.eden        IN      CNAME   eden.wise.a03.com.
+ns1             IN      A       192.170.3.2
+operation       IN      NS      ns1
+@               IN      AAAA    ::1
+```
+- Kemudian pada file **named.conf.options** di **WISE** kita akan melakukan uncomment pada **dnssec-validation auto;** dan tambahkan ``` allow-query{any;}; ``` dibawahnya.
+- Setelah itu, di node **Berlint** pada file **named.conf.options** kita juga akan melakukan uncomment pada **dnssec-validation auto;** dan tambahkan ``` allow-query{any;}; ``` dibawahnya.
+- Untuk file **named.conf.local** pada node **Berlint** kita tambahkan konfigurasi seperti berikut
+```
+zone "operation.wise.a03.com" {
+        type master;
+        file "/etc/bind/delegasi/operation.wise.a03.com";
+};
+```
+- Buat direktori dengan nama **/etc/bind/delegasi** dan copy file **db.local** ke dalam direktori **/etc/bind/delegasi** dengan nama **operation.wise.a03.com** dengan command berikut
+```
+mkdir delegasi
+cp /etc/bind/db.local /etc/bind/delegasi/operation.wise.a03.com
+```
+- Isi konfigurasi untuk file **operation.wise.a03.com** seperti dibawah ini
+```
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     operation.wise.a03.com. root.operation.wise.a03.com. (                  2022102601         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      operation.wise.a03.com.
+@       IN      A       192.170.3.2
+www     IN      CNAME   operation.wise.a03.com.
+@       IN      AAAA    ::1
+```
+- Lakukan testing dengan melakukan ping pada **operation.wise.a03.com** dan jika berhasil akan terlihat seperti ini
+![image](https://user-images.githubusercontent.com/72655301/198835897-52a0592b-b8c6-447a-8bfa-83f67060dbff.png)
+
+### Soal No. 7
