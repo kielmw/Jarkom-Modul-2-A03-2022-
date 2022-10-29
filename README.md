@@ -206,7 +206,7 @@ www     IN      CNAME   operation.wise.a03.com.
 ![image](https://user-images.githubusercontent.com/72655301/198835897-52a0592b-b8c6-447a-8bfa-83f67060dbff.png)
 
 ### Soal No. 7
--Untuk menambah subdomain, maka kita menggunakan DNS Record tipe A dengan menambahkan nama subdomain pada file **operation.wise.a03.com** sekaligus dengan alias dengan menggunakan DNS Record tipe CNAME seperti dibawah ini
+- Untuk menambah subdomain, maka kita menggunakan DNS Record tipe A dengan menambahkan nama subdomain pada file **operation.wise.a03.com** pada node **Berlint** sekaligus dengan alias dengan menggunakan DNS Record tipe CNAME seperti dibawah ini
 ```
 ;
 ; BIND data file for local loopback interface
@@ -226,6 +226,6 @@ strix   IN      A       192.170.3.3
 www.strix       IN      CNAME   strix.operation.wise.a03.com.
 @       IN      AAAA    ::1
 ```
--Restart service bind9 dengan command ``` service bind9 restart ```
--Setelah itu kita akan melakukan testing dengan melakukan ping pada **strix.operation.wise.a03.com** dan jika berhasil akan terlihat seperti ini
+- Restart service bind9 dengan command ``` service bind9 restart ```
+- Setelah itu kita akan melakukan testing dengan melakukan ping pada **strix.operation.wise.a03.com** dan jika berhasil akan terlihat seperti ini
 ![image](https://user-images.githubusercontent.com/72655301/198836081-bb9604c7-7955-414c-a4a0-c0b3c497481d.png)
