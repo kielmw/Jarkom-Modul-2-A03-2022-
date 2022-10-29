@@ -117,3 +117,32 @@ service bind9 restart
 ```
 - Untuk melakukan pengetesan maka ubah namserver dari **SSS** menuju ip dari **Wise** , kemudian coba di ping menuju **wise.a03.com** maka akan didapatkan
 ![Nomor 2](https://i.ibb.co/zbbqZ66/2.jpg)
+
+### Soal No. 5
+- Untuk menjadikan Berlint sebagai DNS Slave kita akan mengubah isi dari file **named.conf.local** pada **WISE** menjadi seperti dibawah ini
+```
+zone "wise.a03.com" {
+        type master;
+        file "/etc/bind/wise/wise.a03.com";
+        allow-transfer { 192.170.3.2; };
+};
+```
+- Lalu kita restart service bind9 dengan command ``` service bind9 restart ```
+- Setelah itu, kita akan menginstall bind9 juga pada node Berlint dengan command 
+```
+apt-get update
+apt-get install bind9 -y
+```
+- Pada file **named.conf.local** di Berlint kita isi konfigurasi berikut
+```
+zone "wise.a03.com" {
+    type slave;
+    masters { 192.170.1.2; }; // Masukan IP EniesLobby tanpa tanda petik
+    file "/var/lib/bind/wise.a03.com";
+};
+```
+- Restart service bind9 dengan command ``` service bind9 restart ```
+- Setelah semuanya telah dilakukan maka untuk testing kita akan melakukan ping kepada WISE (matikan terlebih dahulu service bind9 pada WISE dengan command ``` service bind9 stop ```
+- Jika berhasil maka hasilnya akan terlihat seperti ini
+![image](https://user-images.githubusercontent.com/72655301/198835253-34831cec-1447-4c48-83fb-c3e3b2406902.png)
+
